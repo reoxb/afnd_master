@@ -1,0 +1,20 @@
+{
+  "name": "autofininodete",
+  "version": "1.0.0",
+  "description": "Automata Finito No Determinista",
+  "main": "app.js",
+  "scripts": {
+    "test": "start"
+  },
+  "keywords": [
+    "automata",
+    "finito",
+    "determinista",
+    "alfabeto"
+  ],
+  "author": "Juan Suarez (reoxb)",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "readline-sync": "^1.4.7"
+  }
+}
