@@ -43,6 +43,7 @@ function AFND (estructura) {
   for (let i = 4; i <= estructura.length - 1; i++) {
     funcionTransicion.push(estructura[i].split(','));
   } 
+
   console.log('Funcion de transicion:= ');
   console.log(funcionTransicion);
 
@@ -61,15 +62,17 @@ function AFND (estructura) {
   // -@aa.@aba
 
   if(validaCadena(estadoInicial, estadoFinal, entrada.split(''), fn_transicion_completa, alfabeto)){
-    console.log('Su cadena fue aceptada por el automata');
+    console.log('Su cadena fue aceptada por el automata =)');
   }else{
-    console.log('Su cadena no fue aceptada por el automata');
+    console.log('Su cadena no fue aceptada por el automata :(');
   }
   console.log('Finaliza funcion principal....');
 } // fin del AFND
 
 function creaFuncionTransicion(entrada_ft) {
+
   const fn_trans = [];
+
   entrada_ft.forEach(trans => {
     //regresa un arreglo de objetos
     const transicion = {
@@ -130,35 +133,31 @@ function leerEntrada () {
 }
 
 function validaCadena(estadoInicial, estadoFinal, cadena, funcionTransicionCompleta, alfabeto) {
-  console.log('Cadena := ');
-  console.log(cadena);
-  let simbolo = cadena.shift();
+  let [simbolo, ...resto] = cadena;
 
   if(notIncludes(simbolo)){
     console.log('El simbolo no pertenece al alfabeto := ' + simbolo);
-    simbolo = cadena.shift();
+    [simbolo, ...resto] = resto;
   }
 
-  const fte = fn_trans_estado(estadoInicial[0]); 
-  const fts = fn_trans_simbolo(simbolo, fte); 
+  const ftei = fn_trans_estado(estadoInicial[0]); 
 
-  if(fn_trans_rec(fte, cadena, fts) == 1){
-    console.log(trans.inicio + ' -> ' + trans.simbolo + ' -> ' + trans.final);
+  if(fn_trans_rec(ftei, cadena, simbolo)){
+    console.log(transicion.inicio + ' -> ' + transicion.simbolo + ' -> ' + transicion.final);
     return 1;
   }
 
   function fn_trans_estado(estado) {
-    console.log('Funcion transicion estado := ' + estado);
+    // console.log('Funcion transicion estado := ' + estado);
     const trans_e = funcionTransicionCompleta.filter(trans => trans.inicio == estado);
-    console.log(trans_e);
+    // console.log(trans_e);
     return trans_e;
-    
   }
 
   function fn_trans_simbolo(simbolo, trans_e) {
-    console.log('Funcion transicion simbolo:= ' + simbolo);
+    // console.log('Funcion transicion simbolo:= ' + simbolo);
     const trans_s = trans_e.filter(trans => trans.simbolo == simbolo);
-    console.log(trans_s);
+    // console.log(trans_s);
     return trans_s;
   }
 
@@ -170,42 +169,48 @@ function validaCadena(estadoInicial, estadoFinal, cadena, funcionTransicionCompl
     }
   }
 
-  function fn_trans_rec(fte, cadena, fts) {
-    console.log('Cadena := ');
-    console.log(cadena);
+  function fn_trans_rec(fte, cadena, simbolo) {
+    // console.log('Cadena := ');
+    // console.log(cadena);
 
     if(cadena.length == 0){
+
+      let fts = fn_trans_simbolo(simbolo, fte)
+
       estadoFinal.forEach(ef => {
-        let estados_finales = fts.filter( trans_f => trans_f.final == estadoFinal[0]);
-        if( estados_finales.length !== 0 ) {
+
+        let hay_edos_fin = fts.filter(trans_f => trans_f.final == ef);
+
+        if( hay_edos_fin.length !== 0 ) {
+          hay_edos_fin.forEach(trans_f => {
+            console.log(trans_f.inicio + ' -> ' + trans_f.simbolo + ' -> ' + trans_f.final);
             console.log('Felicidades!!!');
-            estados_finales.forEach(path => {
-            console.log(path.inicio + ' -> ' + path.simbolo + ' -> ' + path.final);
           });
           return 1;
+        } else {
+          return -1;
         } 
       });
     } else {
-      let simbolo = cadena.shift();
+
+      let [simbolo, ...resto] = cadena;
 
       if(notIncludes(simbolo)){
         console.log('El simbolo no pertenece al alfabeto := ' + simbolo);
-        simbolo = cadena.shift();
+        [simbolo, ...resto] = resto;
       }
 
+      let fts = fn_trans_simbolo(simbolo, fte)
+
       fts.forEach(trans => {
-        console.log('Funcion de transicion del estado siguiente');
-        console.log(trans);
-        console.log('ftes');
+        // console.log('Funcion de transicion del estado siguiente: ' + JSON.stringify(trans));
         // funcion de transicion del estado siguiente
         let ftes = fn_trans_estado(trans.final);  
-        console.log(ftes);
 
-        fn_trans_rec(ftes, cadena, fn_trans_simbolo(simbolo, fte));
-        // if(fn_trans_rec(ftes, cadena, fn_trans_simbolo(simbolo, ftes)) == 1){
-        //   console.log(trans.inicio + ' -> ' + trans.simbolo + ' -> ' + trans.final);
-        //   return 1;
-        // }
+        if(fn_trans_rec(ftes, resto, simbolo)){
+          console.log(trans.inicio + ' -> ' + trans.simbolo + ' -> ' + trans.final);
+          return 1;
+        }
       });
     }
   }
