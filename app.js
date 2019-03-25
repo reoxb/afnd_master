@@ -140,9 +140,12 @@ function validaCadena(estadoInicial, estadoFinal, cadena, funcionTransicionCompl
     [simbolo, ...resto] = resto;
   }
 
-  const ftei = fn_trans_estado(estadoInicial[0]); 
+  let estado = estadoInicial[0];
+  let resultado = ['Inicio', ...estado, ...simbolo];
 
-  if(fn_trans_rec(ftei, cadena, simbolo)){
+  const ftei = fn_trans_estado(estado); 
+
+  if(fn_trans_rec(ftei, cadena, simbolo, estado, resultado)){
     console.log(transicion.inicio + ' -> ' + transicion.simbolo + ' -> ' + transicion.final);
     return 1;
   }
@@ -169,7 +172,7 @@ function validaCadena(estadoInicial, estadoFinal, cadena, funcionTransicionCompl
     }
   }
 
-  function fn_trans_rec(fte, cadena, simbolo) {
+  function fn_trans_rec(fte, cadena, simbolo, estado, resultado) {
     // console.log('Cadena := ');
     // console.log(cadena);
 
@@ -183,8 +186,9 @@ function validaCadena(estadoInicial, estadoFinal, cadena, funcionTransicionCompl
 
         if( hay_edos_fin.length !== 0 ) {
           hay_edos_fin.forEach(trans_f => {
-            console.log(trans_f.inicio + ' -> ' + trans_f.simbolo + ' -> ' + trans_f.final);
-            console.log('Felicidades!!!');
+            // console.log(trans_f.inicio + ' -> ' + trans_f.simbolo + ' -> ' + trans_f.final);
+            let path = resultado.join(' -> ');
+            console.log(path);
           });
           return 1;
         } else {
@@ -206,8 +210,9 @@ function validaCadena(estadoInicial, estadoFinal, cadena, funcionTransicionCompl
         // console.log('Funcion de transicion del estado siguiente: ' + JSON.stringify(trans));
         // funcion de transicion del estado siguiente
         let ftes = fn_trans_estado(trans.final);  
+        resultado = [...resultado, ...trans.final, ...simbolo];
 
-        if(fn_trans_rec(ftes, resto, simbolo)){
+        if(fn_trans_rec(ftes, resto, simbolo, estado, resultado)){
           console.log(trans.inicio + ' -> ' + trans.simbolo + ' -> ' + trans.final);
           return 1;
         }
